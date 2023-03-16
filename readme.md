@@ -1,5 +1,14 @@
-﻿using RustSharp;
+# RustSharp
 
+Using Rust coding style in C#.
+
+
+
+## Usage
+
+You can use `Result` in C#
+
+```csharp
 // Wrap a method with "Result" return value
 
 Result<int, string> ParseInt(string str)
@@ -27,26 +36,36 @@ var isErr = result.IsErr;
 // Match the result values
 
 result.Match(
-    (ok) => {
+	(ok) => {
         Console.WriteLine($"The integer you typed is {ok}");
     },
-    (err) => {
+	(err) => {
         Console.WriteLine($"The string you typed is not a integer, {err}");
     });
 
+// You can also use switch statement
 
+switch (result)
+{
+    case OkResult<int, string> ok:
+        Console.WriteLine($"The integer you typed is {ok.Value}");
+        break;
+    case ErrResult<int, string> err:
+        Console.WriteLine($"The string you typed is not a integer, {err.Value}");
+        break;
+}
+```
 
+Use `Option` in C#
 
+```csharp
 // Write a simple method with Option return value
 
 Option<float> Divide(float a, float b)
 {
-    if (b != 0.0)
-    {
+    if (b != 0.0) {
         return Option<float>.Some(a / b);
-    }
-    else
-    {
+    } else {
         return Option<float>.None();
     }
 }
@@ -63,9 +82,37 @@ var isNone = option.IsNone;
 // Match the result values
 
 option.Match(
-    (value) => {
+	(value) => {
         Console.WriteLine($"Result: {value}");
     },
-    () => {
+	() => {
         Console.WriteLine("No value");
     });
+
+// Or use switch statement
+
+switch (option)
+{
+    case SomeOption<float> some:
+        Console.WriteLine($"Result: {some.Value}");
+        break;
+    default:
+        Console.WriteLine("No value");
+        break;
+}
+```
+
+Common methods of Result and Option
+
+```csharp
+// Convert Result to Option
+
+var result = Result<string, string>.Ok("Success value");
+var option = result.Ok();   // returns Option<string> contains the success value
+
+// Unwrap Result and Option
+
+var result = Result<string, string>.Ok("Success value");
+string value = result.Unwrap();
+```
+

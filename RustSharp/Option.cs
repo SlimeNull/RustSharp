@@ -6,204 +6,57 @@
     /// <typeparam name="TValue"></typeparam>
     public abstract class Option<TValue> : ICloneable
     {
-        public bool IsSome => this is SomeOption<TValue>;
-        public bool IsNone => this is NoneOption<TValue>;
+        public abstract bool IsSome { get; }
+        public abstract bool IsNone { get; }
 
-        public bool IsSomeAnd(Func<bool> f)
-        {
-            if (!IsSome)
-                return false;
-            return f.Invoke();
-        }
+        public abstract bool IsSomeAnd(Func<TValue, bool> f);
 
-        public bool IsNoneAnd(Func<bool> f)
-        {
-            if (!IsNone)
-                return false;
-            return f.Invoke();
-        }
+        public abstract TValue Expect(string msg);
 
-        public TValue Expect(string msg)
-        {
-            if (this is SomeOption<TValue> some)
-                return some.Value;
-            throw ExpectException.New(msg);
-        }
+        public abstract TValue Unwrap();
 
-        public TValue Unwrap()
-        {
-            if (this is SomeOption<TValue> some)
-                return some.Value;
-            throw ExpectException.New("Called Option.Unwrap on a None value");
-        }
+        public abstract TValue UnwrapOr(TValue defaultValue);
 
-        public TValue UnwrapOr(TValue defaultValue)
-        {
-            if (this is SomeOption<TValue> some)
-                return some.Value;
-            return defaultValue;
-        }
+        public abstract TValue UnwrapOrElse(Func<TValue> f);
 
-        public TValue UnwrapOrElse(Func<TValue> f)
-        {
-            if (this is SomeOption<TValue> some)
-                return some.Value;
-            return f.Invoke();
-        }
+        public abstract TValue? UnwrapOrDefault();
 
-        public TValue? UnwrapOrDefault()
-        {
-            if (this is SomeOption<TValue> some)
-                return some.Value;
-            return default;
-        }
+        public abstract Option<TNewValue> Map<TNewValue>(Func<TValue, TNewValue> f);
 
-        public Option<TNewValue> Map<TNewValue>(Func<TValue, TNewValue> f)
-        {
-            if (this is SomeOption<TValue> some)
-                return Option<TNewValue>.Some(f.Invoke(some.Value));
-            return Option<TNewValue>.None();
-        }
+        public abstract Option<TValue> Inspect(Action<TValue> action);
 
-        public Option<TValue> Inspect(Action<TValue> action)
-        {
-            if (this is SomeOption<TValue> some)
-                action.Invoke(some.Value);
+        public abstract TNewValue MapOr<TNewValue>(TNewValue defaultValue, Func<TValue, TNewValue> f);
 
-            return this;
-        }
+        public abstract TNewValue MapOrElse<TNewValue>(Func<TNewValue> defaultValueGetter, Func<TValue, TNewValue> f);
 
-        public TNewValue MapOr<TNewValue>(TNewValue defaultValue, Func<TValue, TNewValue> f)
-        {
-            if (this is SomeOption<TValue> some)
-                return f.Invoke(some.Value);
+        public abstract Result<TValue, TError> OkOr<TError>(TError err);
 
-            return defaultValue;
-        }
+        public abstract Result<TValue, TError> OkOrElse<TError>(Func<TError> errorGetter);
 
-        public TNewValue MapOrElse<TNewValue>(Func<TNewValue> defaultValueGetter, Func<TValue, TNewValue> f)
-        {
-            if (this is SomeOption<TValue> some)
-                return f.Invoke(some.Value);
+        public abstract Option<TNewValue> And<TNewValue>(Option<TNewValue> optb);
 
-            return defaultValueGetter.Invoke();
-        }
+        public abstract Option<TNewValue> AndThen<TNewValue>(Func<TValue, TNewValue> f);
 
-        public Result<TValue, TError> OkOr<TError>(TError err)
-        {
-            if (this is SomeOption<TValue> some)
-                return Result<TValue, TError>.Ok(some.Value);
+        public abstract Option<TValue> Filter(Func<TValue, bool> predicate);
 
-            return Result<TValue, TError>.Err(err);
-        }
+        public abstract Option<TValue> Or(Option<TValue> optb);
 
-        public Result<TValue, TError> OkOrElse<TError>(Func<TError> errorGetter)
-        {
-            if (this is SomeOption<TValue> some)
-                return Result<TValue, TError>.Ok(some.Value);
+        public abstract Option<TValue> OrElse(Func<Option<TValue>> f);
 
-            return Result<TValue, TError>.Err(errorGetter.Invoke());
-        }
+        public abstract Option<TValue> Xor(Option<TValue> optb);
 
-        public Option<TNewValue> And<TNewValue>(Option<TNewValue> optb)
-        {
-            if (this is SomeOption<TValue>)
-                return optb;
+        public abstract bool Contains<TOther>(TOther x) where TOther : IEquatable<TValue>;
 
-            return Option<TNewValue>.None();
-        }    
+        public abstract Option<(TValue, TValue2)> Zip<TValue2>(Option<TValue2> other);
 
-        public Option<TNewValue> AndThen<TNewValue>(Func<TValue, TNewValue> f)
-        {
-            if (this is SomeOption<TValue> some)
-                return Option<TNewValue>.Some(f.Invoke(some.Value));
+        public abstract Option<TNewValue> ZipWith<TValue2, TNewValue>(Option<TValue2> other, Func<TValue, TValue2, TNewValue> f);
 
-            return Option<TNewValue>.None();
-        }
+        public abstract void Match(Action<TValue> someAction, Action noneAction);
 
-        public Option<TValue> Filter(Func<TValue, bool> predicate)
-        {
-            if (this is SomeOption<TValue> some)
-                if (predicate.Invoke(some.Value))
-                    return Option<TValue>.Some(some.Value);
-
-            return Option<TValue>.None();
-        }
-
-        public Option<TValue> Or(Option<TValue> optb)
-        {
-            if (this is SomeOption<TValue> some)
-                return some;
-
-            return optb;
-        }
-
-        public Option<TValue> OrElse(Func<Option<TValue>> f)
-        {
-            if (this is SomeOption<TValue> some)
-                return some;
-
-            return f.Invoke();
-        }
-
-        public Option<TValue> Xor(Option<TValue> optb)
-        {
-            if (this is SomeOption<TValue> some1 && optb is NoneOption<TValue>)
-                return some1;
-            else if (this is NoneOption<TValue> && optb is SomeOption<TValue> some2)
-                return some2;
-
-            return Option<TValue>.None();
-        }
-
-        public bool Contains<TOther>(TOther x) where TOther : IEquatable<TValue>
-        {
-            if (this is SomeOption<TValue> some)
-                return x.Equals(some.Value);
-
-            return false;
-        }
-
-        public Option<(TValue, TValue2)> Zip<TValue2>(Option<TValue2> other)
-        {
-            if (this is SomeOption<TValue> a &&
-                other is SomeOption<TValue2> b)
-                return Option<(TValue, TValue2)>.Some((a.Value, b.Value));
-
-            return Option<(TValue, TValue2)>.None();
-        }
-
-        public Option<TNewValue> ZipWith<TValue2, TNewValue>(Option<TValue2> other, Func<TValue, TValue2, TNewValue> f)
-        {
-            if (this is SomeOption<TValue> a &&
-                other is SomeOption<TValue2> b)
-                return Option<TNewValue>.Some(f.Invoke(a.Value, b.Value));
-
-            return Option<TNewValue>.None();
-        }
-
-        public void Match(Action<TValue> someAction)
-        {
-            if (this is SomeOption<TValue> some)
-                someAction.Invoke(some.Value);
-        }
-
-        public Option<TValue> Clone()
-        {
-            if (this is SomeOption<TValue> some)
-            {
-                TValue newValue = some.Value;
-                if (newValue is ICloneable cloneableNewValue)
-                    newValue = (TValue)cloneableNewValue.Clone();
-
-                return Option<TValue>.Some(newValue);
-            }
-
-            return Option<TValue>.None();
-        }
+        public abstract Option<TValue> Clone();
 
         public static SomeOption<TValue> Some(TValue value) => new SomeOption<TValue>(value);
         public static NoneOption<TValue> None() => new NoneOption<TValue>();
-        object ICloneable.Clone() => throw new NotImplementedException();
+        object ICloneable.Clone() => Clone();
     }
 }
