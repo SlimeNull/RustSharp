@@ -5,6 +5,7 @@
 /// </summary>
 /// <typeparam name="TValue"></typeparam>
 public abstract class Option<TValue> : ICloneable
+    where TValue : notnull
 {
     /// <summary>
     /// Returns true if the option is a Some value.
@@ -76,7 +77,8 @@ public abstract class Option<TValue> : ICloneable
     /// <typeparam name="TNewValue"></typeparam>
     /// <param name="f"></param>
     /// <returns></returns>
-    public abstract Option<TNewValue> Map<TNewValue>(Func<TValue, TNewValue> f);
+    public abstract Option<TNewValue> Map<TNewValue>(Func<TValue, TNewValue> f)
+        where TNewValue : notnull;
 
     /// <summary>
     /// Calls the provided closure with a reference to the contained value (if <see cref="SomeOption{TValue}"/>).
@@ -120,7 +122,8 @@ public abstract class Option<TValue> : ICloneable
     /// <typeparam name="TError"></typeparam>
     /// <param name="err"></param>
     /// <returns></returns>
-    public abstract Result<TValue, TError> OkOr<TError>(TError err);
+    public abstract Result<TValue, TError> OkOr<TError>(TError err)
+        where TError : notnull;
 
     /// <summary>
     /// Transforms the Option&lt;T&gt; into a Result&lt;T, E&gt;, mapping Some(v) to <br />
@@ -129,7 +132,8 @@ public abstract class Option<TValue> : ICloneable
     /// <typeparam name="TError"></typeparam>
     /// <param name="errorGetter"></param>
     /// <returns></returns>
-    public abstract Result<TValue, TError> OkOrElse<TError>(Func<TError> errorGetter);
+    public abstract Result<TValue, TError> OkOrElse<TError>(Func<TError> errorGetter)
+        where TError : notnull;
 
     /// <summary>
     /// Returns <see cref="NoneOption{TValue}"/> if the option is <see cref="NoneOption{TValue}"/>, otherwise returns `optb`. <br />
@@ -141,7 +145,8 @@ public abstract class Option<TValue> : ICloneable
     /// <typeparam name="TNewValue"></typeparam>
     /// <param name="optb"></param>
     /// <returns></returns>
-    public abstract Option<TNewValue> And<TNewValue>(Option<TNewValue> optb);
+    public abstract Option<TNewValue> And<TNewValue>(Option<TNewValue> optb) 
+        where TNewValue : notnull;
 
     /// <summary>
     /// Returns <see cref="NoneOption{TValue}"/> if the option is <see cref="NoneOption{TValue}"/>, otherwise calls <paramref name="f"/> with the <br />
@@ -152,7 +157,8 @@ public abstract class Option<TValue> : ICloneable
     /// <typeparam name="TNewValue"></typeparam>
     /// <param name="f"></param>
     /// <returns></returns>
-    public abstract Option<TNewValue> AndThen<TNewValue>(Func<TValue, TNewValue> f);
+    public abstract Option<TNewValue> AndThen<TNewValue>(Func<TValue, TNewValue> f) 
+        where TNewValue : notnull;
 
     /// <summary>
     /// Returns <see cref="NoneOption{TValue}"/> if the option is <see cref="NoneOption{TValue}"/>, otherwise calls <paramref name="predicate"/> <br />
@@ -213,7 +219,8 @@ public abstract class Option<TValue> : ICloneable
     /// <typeparam name="TValue2"></typeparam>
     /// <param name="other"></param>
     /// <returns></returns>
-    public abstract Option<(TValue, TValue2)> Zip<TValue2>(Option<TValue2> other);
+    public abstract Option<(TValue, TValue2)> Zip<TValue2>(Option<TValue2> other)
+        where TValue2 : notnull;
 
     /// <summary>
     /// Zips self and another Option with function <paramref name="f"/>. <br />
@@ -226,7 +233,9 @@ public abstract class Option<TValue> : ICloneable
     /// <param name="other"></param>
     /// <param name="f"></param>
     /// <returns></returns>
-    public abstract Option<TNewValue> ZipWith<TValue2, TNewValue>(Option<TValue2> other, Func<TValue, TValue2, TNewValue> f);
+    public abstract Option<TNewValue> ZipWith<TValue2, TNewValue>(Option<TValue2> other, Func<TValue, TValue2, TNewValue> f)
+        where TValue2 : notnull
+        where TNewValue : notnull;
 
     /// <summary>
     /// Perform the corresponding operation based on the value of the current Option
@@ -241,12 +250,20 @@ public abstract class Option<TValue> : ICloneable
     /// <returns></returns>
     public abstract Option<TValue> Clone();
 
+
+    /// <summary>
+    /// Create an <see cref="Option{TValue}"/> from specified value
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static Option<TValue> Create(TValue? value) => value is null ? new NoneOption<TValue>() : new SomeOption<TValue>(value);
+
     /// <summary>
     /// Create a <see cref="SomeOption{TValue}"/> from specified value.
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static SomeOption<TValue> Some(TValue value) => new SomeOption<TValue>(value);
+    public static SomeOption<TValue> Some(TValue value) => new SomeOption<TValue>(value ?? throw new ArgumentNullException());
 
     /// <summary>
     /// Create a <see cref="NoneOption{TValue}"/>
@@ -278,12 +295,24 @@ public abstract class Option<TValue> : ICloneable
 public static class Option
 {
     /// <summary>
+    /// Create an <see cref="Option{TValue}"/> from specified value
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static Option<TValue> Create<TValue>(TValue? value)
+        where TValue : notnull
+        => value is null ? new NoneOption<TValue>() : new SomeOption<TValue>(value);
+
+    /// <summary>
     /// Create a <see cref="ValueSomeOption{TValue}"/> for <see cref="Option{TValue}"/>
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static ValueSomeOption<TValue> Some<TValue>(TValue value) => new ValueSomeOption<TValue>(value);
+    public static ValueSomeOption<TValue> Some<TValue>(TValue value)
+        where TValue : notnull
+        => new ValueSomeOption<TValue>(value ?? throw new ArgumentNullException());
 
     /// <summary>
     /// Create a <see cref="ValueNoneOption"/> for any <see cref="Option{TValue}"/>.
@@ -296,7 +325,8 @@ public static class Option
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
     /// <param name="Value"></param>
-    public record struct ValueSomeOption<TValue>(TValue Value);
+    public record struct ValueSomeOption<TValue>(TValue Value)
+        where TValue : notnull;
 
     /// <summary>
     /// Struct that can be implicitly converted to any <see cref="Option{TValue}"/>.

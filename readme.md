@@ -6,7 +6,7 @@ Using Rust coding style in C#.
 
 ## Usage
 
-You can use `Result` in C#
+Use the `Result` to handle method return values and error messages:
 
 ```csharp
 // Wrap a method with "Result" return value

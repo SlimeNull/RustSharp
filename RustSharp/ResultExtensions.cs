@@ -13,6 +13,8 @@ public static class ResultExtensions
     /// <param name="self"></param>
     /// <returns></returns>
     public static Result<TValue, TError> Flatten<TValue, TError>(this Result<Result<TValue, TError>, TError> self)
+        where TValue : notnull
+        where TError : notnull
     {
         return self.AndThen(x => x);
     }
@@ -29,6 +31,8 @@ public static class ResultExtensions
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     public static Option<Result<TValue, TError>> Transpose<TValue, TError>(this Result<Option<TValue>, TError> self)
+        where TValue : notnull
+        where TError : notnull
     {
         return self switch
         {

@@ -6,6 +6,8 @@
 /// <typeparam name="TValue"></typeparam>
 /// <typeparam name="TError"></typeparam>
 public class OkResult<TValue, TError> : Result<TValue, TError>
+    where TValue : notnull
+    where TError : notnull
 {
     /// <summary>
     /// The success value
@@ -76,7 +78,7 @@ public class OkResult<TValue, TError> : Result<TValue, TError>
     /// <inheritdoc/>
     public override bool ContainsErr<TOther>(TOther f) => false;
     /// <inheritdoc/>
-    public override void Match(Action<TValue> okAction, Action<TError> errAction) => okAction.Invoke(Value);
+    public override void Match(Action<TValue> okAction, Action<TError> errAction) => okAction?.Invoke(Value);
     /// <inheritdoc/>
     public override Result<TValue, TError> Clone() => Value is ICloneable cloneableValue ? Ok((TValue)cloneableValue.Clone()) : Ok(Value);
 

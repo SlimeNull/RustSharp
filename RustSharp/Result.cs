@@ -6,6 +6,8 @@
 /// <typeparam name="TValue"></typeparam>
 /// <typeparam name="TError"></typeparam>
 public abstract class Result<TValue, TError> : ICloneable
+    where TValue : notnull
+    where TError : notnull
 {
     /// <summary>
     /// Returns true if the result is <see cref="OkResult{TValue, TError}"/>.
@@ -58,7 +60,8 @@ public abstract class Result<TValue, TError> : ICloneable
     /// <typeparam name="TNewValue"></typeparam>
     /// <param name="mapper"></param>
     /// <returns></returns>
-    public abstract Result<TNewValue, TError> Map<TNewValue>(Func<TValue, TNewValue> mapper);
+    public abstract Result<TNewValue, TError> Map<TNewValue>(Func<TValue, TNewValue> mapper)
+        where TNewValue : notnull;
 
     /// <summary>
     /// Returns the provided default (if <see cref="ErrResult{TValue, TError}"/>), or <br />
@@ -97,7 +100,8 @@ public abstract class Result<TValue, TError> : ICloneable
     /// <typeparam name="TNewError"></typeparam>
     /// <param name="mapper"></param>
     /// <returns></returns>
-    public abstract Result<TValue, TNewError> MapErr<TNewError>(Func<TError, TNewError> mapper);
+    public abstract Result<TValue, TNewError> MapErr<TNewError>(Func<TError, TNewError> mapper)
+        where TNewError : notnull;
 
     /// <summary>
     /// Calls the provided closure with a reference to the contained value (if <see cref="OkResult{TValue, TError}"/>).
@@ -172,7 +176,8 @@ public abstract class Result<TValue, TError> : ICloneable
     /// <typeparam name="TNewValue"></typeparam>
     /// <param name="res"></param>
     /// <returns></returns>
-    public abstract Result<TNewValue, TError> And<TNewValue>(Result<TNewValue, TError> res);
+    public abstract Result<TNewValue, TError> And<TNewValue>(Result<TNewValue, TError> res)
+        where TNewValue : notnull;
 
     /// <summary>
     /// Calls `op` if the result is <see cref="OkResult{TValue, TError}"/>, otherwise returns the <see cref="ErrResult{TValue, TError}"/> value of self. <br />
@@ -182,7 +187,8 @@ public abstract class Result<TValue, TError> : ICloneable
     /// <typeparam name="TNewValue"></typeparam>
     /// <param name="operation"></param>
     /// <returns></returns>
-    public abstract Result<TNewValue, TError> AndThen<TNewValue>(Func<TValue, Result<TNewValue, TError>> operation);
+    public abstract Result<TNewValue, TError> AndThen<TNewValue>(Func<TValue, Result<TNewValue, TError>> operation)
+        where TNewValue : notnull;
 
     /// <summary>
     /// Returns `res` if the result is <see cref="ErrResult{TValue, TError}"/>, otherwise returns the <see cref="OkResult{TValue, TError}"/> value of self. <br />
@@ -203,7 +209,8 @@ public abstract class Result<TValue, TError> : ICloneable
     /// <typeparam name="TNewError"></typeparam>
     /// <param name="operation"></param>
     /// <returns></returns>
-    public abstract Result<TValue, TNewError> OrElse<TNewError>(Func<TError, Result<TValue, TNewError>> operation);
+    public abstract Result<TValue, TNewError> OrElse<TNewError>(Func<TError, Result<TValue, TNewError>> operation)
+        where TNewError : notnull;
 
     /// <summary>
     /// Returns the contained <see cref="OkResult{TValue, TError}"/> value or a provided default. <br />
@@ -260,7 +267,7 @@ public abstract class Result<TValue, TError> : ICloneable
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static OkResult<TValue, TError> Ok(TValue value) => new OkResult<TValue, TError>(value);
+    public static OkResult<TValue, TError> Ok(TValue value) => new OkResult<TValue, TError>(value ?? throw new ArgumentNullException());
 
     /// <summary>
     /// Converts from Result&lt;TValue, TError&gt; to Option&lt;TError&gt;. <br />
@@ -270,7 +277,7 @@ public abstract class Result<TValue, TError> : ICloneable
     /// </summary>
     /// <param name="error"></param>
     /// <returns></returns>
-    public static ErrResult<TValue, TError> Err(TError error) => new ErrResult<TValue, TError>(error);
+    public static ErrResult<TValue, TError> Err(TError error) => new ErrResult<TValue, TError>(error ?? throw new ArgumentNullException());
 
     /// <summary>
     /// Convert from <see cref="Result.ValueOkResult{TValue}"/>
@@ -298,7 +305,9 @@ public static class Result
     /// <typeparam name="TValue"></typeparam>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static ValueOkResult<TValue> Ok<TValue>(TValue value) => new ValueOkResult<TValue>(value);
+    public static ValueOkResult<TValue> Ok<TValue>(TValue value)
+        where TValue : notnull 
+        => new ValueOkResult<TValue>(value ?? throw new ArgumentNullException());
 
     /// <summary>
     /// Create a <see cref="ValueErrResult{TError}"/> for any <see cref="Result{TValue, TError}"/>
@@ -306,19 +315,23 @@ public static class Result
     /// <typeparam name="TError"></typeparam>
     /// <param name="error"></param>
     /// <returns></returns>
-    public static ValueErrResult<TError> Err<TError>(TError error) => new ValueErrResult<TError>(error);
+    public static ValueErrResult<TError> Err<TError>(TError error)
+        where TError : notnull 
+        => new ValueErrResult<TError>(error ?? throw new ArgumentNullException());
 
     /// <summary>
     /// Struct that can be implicitly converted to any <see cref="Result{TValue, TError}"/>
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
     /// <param name="Value"></param>
-    public record struct ValueOkResult<TValue>(TValue Value);
+    public record struct ValueOkResult<TValue>(TValue Value)
+        where TValue : notnull;
 
     /// <summary>
     /// Struct that can be implicitly converted to any <see cref="Result{TValue, TError}"/>
     /// </summary>
     /// <typeparam name="TError"></typeparam>
     /// <param name="Value"></param>
-    public record struct ValueErrResult<TError>(TError Value);
+    public record struct ValueErrResult<TError>(TError Value)
+        where TError : notnull;
 }

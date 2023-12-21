@@ -16,6 +16,8 @@ public static class OptionExtensions
     /// <param name="self"></param>
     /// <returns></returns>
     public static (Option<TValue> Option1, Option<TValue2> Option2) Unzip<TValue, TValue2>(this Option<(TValue, TValue2)> self)
+        where TValue : notnull
+        where TValue2 : notnull
     {
         if (self is SomeOption<(TValue, TValue2)> some)
             return (Option<TValue>.Some(some.Value.Item1), Option<TValue2>.Some(some.Value.Item2));
@@ -36,6 +38,8 @@ public static class OptionExtensions
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     public static Result<Option<TValue>, TError> Transpose<TValue, TError>(this Option<Result<TValue, TError>> self)
+        where TValue : notnull
+        where TError : notnull
     {
         if (self is SomeOption<Result<TValue, TError>> some)
         {

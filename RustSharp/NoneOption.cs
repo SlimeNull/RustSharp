@@ -5,6 +5,7 @@
 /// </summary>
 /// <typeparam name="TValue"></typeparam>
 public class NoneOption<TValue> : Option<TValue>
+    where TValue : notnull
 {
     internal NoneOption()
     {
@@ -38,7 +39,8 @@ public class NoneOption<TValue> : Option<TValue>
     /// <inheritdoc/>
     public override TNewValue MapOrElse<TNewValue>(Func<TNewValue> defaultValueGetter, Func<TValue, TNewValue> f) => defaultValueGetter.Invoke();
     /// <inheritdoc/>
-    public override Result<TValue, TError> OkOr<TError>(TError err) => Result<TValue, TError>.Err(err);
+    public override Result<TValue, TError> OkOr<TError>(TError err)
+        => Result<TValue, TError>.Err(err);
     /// <inheritdoc/>
     public override Result<TValue, TError> OkOrElse<TError>(Func<TError> errorGetter) => Result<TValue, TError>.Err(errorGetter.Invoke());
     /// <inheritdoc/>
@@ -60,7 +62,7 @@ public class NoneOption<TValue> : Option<TValue>
     /// <inheritdoc/>
     public override Option<TNewValue> ZipWith<TValue2, TNewValue>(Option<TValue2> other, Func<TValue, TValue2, TNewValue> f) => Option<TNewValue>.None();
     /// <inheritdoc/>
-    public override void Match(Action<TValue> someAction, Action noneAction) => noneAction.Invoke();
+    public override void Match(Action<TValue> someAction, Action noneAction) => noneAction?.Invoke();
     /// <inheritdoc/>
     public override Option<TValue> Clone() => None();
 

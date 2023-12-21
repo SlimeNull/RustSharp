@@ -5,6 +5,7 @@
 /// </summary>
 /// <typeparam name="TValue"></typeparam>
 public class SomeOption<TValue> : Option<TValue>
+    where TValue : notnull
 {
     /// <summary>
     /// Value
@@ -71,7 +72,7 @@ public class SomeOption<TValue> : Option<TValue>
     /// <inheritdoc/>
     public override Option<TNewValue> ZipWith<TValue2, TNewValue>(Option<TValue2> other, Func<TValue, TValue2, TNewValue> f) => other is SomeOption<TValue2> some2 ? Option<TNewValue>.Some(f.Invoke(Value, some2.Value)) : Option<TNewValue>.None();
     /// <inheritdoc/>
-    public override void Match(Action<TValue> someAction, Action noneAction) => someAction.Invoke(Value);
+    public override void Match(Action<TValue> someAction, Action noneAction) => someAction?.Invoke(Value);
     /// <inheritdoc/>
     public override Option<TValue> Clone() => Value is ICloneable cloneableValue ? Some((TValue)cloneableValue.Clone()) : Some(Value);
 
