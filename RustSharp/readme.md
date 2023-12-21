@@ -16,11 +16,11 @@ Result<int, string> ParseInt(string str)
 {
     try
     {
-        return Result<int, string>.Ok(int.Parse(str));
+        return Result.Ok(int.Parse(str));
     }
     catch (Exception ex)
     {
-        return Result<int, string>.Err(ex.Message);
+        return Result.Err(ex.Message);
     }
 }
 
@@ -65,9 +65,9 @@ Use `Option` in C#
 Option<float> Divide(float a, float b)
 {
     if (b != 0.0) {
-        return Option<float>.Some(a / b);
+        return Option.Some(a / b);
     } else {
-        return Option<float>.None();
+        return Option.None();
     }
 }
 
