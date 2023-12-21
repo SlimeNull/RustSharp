@@ -1,28 +1,22 @@
-﻿using System.Runtime.Serialization;
+﻿namespace RustSharp;
 
-namespace RustSharp
+/// <summary>
+/// Throws while calling 'Unwrap' on wrong value
+/// </summary>
+public class UnwrapException : Exception
 {
-    public class UnwrapException : Exception
+    /// <summary>
+    /// Initializes a new instance of the RustSharp.UnwrapException class.
+    /// </summary>
+    public UnwrapException()
     {
-        public UnwrapException()
-        {
-        }
+    }
 
-        public UnwrapException(string? message) : base(message)
-        {
-        }
-
-        public UnwrapException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected UnwrapException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-
-        public static UnwrapException New(string msg, object? error)
-        {
-            return new UnwrapException($"{msg}: {error}");
-        }
+    /// <summary>
+    /// Initializes a new instance of the RustSharp.UnwrapException class with a specified error message.
+    /// </summary>
+    /// <param name="message"></param>
+    public UnwrapException(string? message) : base(message)
+    {
     }
 }

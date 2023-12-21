@@ -2,22 +2,20 @@
 
 // Wrap a method with "Result" return value
 
-Result<int, string> ParseInt(string str)
+Result<string, string> GetHostNameFromUri(string str)
 {
-    try
-    {
-        return Result.Ok(int.Parse(str));
-    }
-    catch (Exception ex)
-    {
-        return Result.Err(ex.Message);
-    }
+    if (!Uri.TryCreate(str, UriKind.Absolute, out var uri))
+        return Result.Err("Invalid URI");
+    if (uri.HostNameType != UriHostNameType.Dns)
+        return Result.Err("Host is not a domain name");
+
+    return Result.Ok(uri.Host);
 }
 
 // Call that method
 
 string input = Console.ReadLine()!;
-var result = ParseInt(input);
+var result = GetHostNameFromUri(input);
 
 // Check if value is "Ok" or "Err"
 

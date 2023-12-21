@@ -6,15 +6,18 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <Title>RustSharp</Title>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Authors>SlimeNull</Authors>
     <RepositoryUrl>https://github.com/SlimeNull/RustSharp</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <Description>Using Rust coding style in C#.
-This package contains come common components for better program design of Rust language.</Description>
+    <Description>
+      Using Rust coding style in C#.
+      This package contains come common components for better program design of Rust language.
+    </Description>
     <PackageProjectUrl>https://github.com/SlimeNull/RustSharp</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,25 +1,23 @@
-﻿using System.Runtime.Serialization;
+﻿namespace RustSharp;
 
-namespace RustSharp
+/// <summary>
+/// Throws while calling 'Except' on wrong value
+/// </summary>
+public class ExpectException : Exception
 {
-    public class ExpectException : Exception
+    /// <summary>
+    /// Initializes a new instance of the RustSharp.ExpectException class.
+    /// </summary>
+    public ExpectException()
     {
-        public ExpectException()
-        {
-        }
+    }
 
-        public ExpectException(string? message) : base(message)
-        {
-        }
 
-        public ExpectException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected ExpectException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-
-        public static ExpectException New(string msg) => new ExpectException(msg);
+    /// <summary>
+    /// Initializes a new instance of the RustSharp.ExpectException class with a specified error message.
+    /// </summary>
+    /// <param name="message"></param>
+    public ExpectException(string? message) : base(message)
+    {
     }
 }
