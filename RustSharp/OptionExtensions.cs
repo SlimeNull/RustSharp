@@ -2,7 +2,7 @@
 {
     public static class OptionExtensions
     {
-        public static (Option<TValue>, Option<TValue2>) Unzip<TValue, TValue2>(this Option<(TValue, TValue2)> self)
+        public static (Option<TValue> Option1, Option<TValue2> Option2) Unzip<TValue, TValue2>(this Option<(TValue, TValue2)> self)
         {
             if (self is SomeOption<(TValue, TValue2)> some)
                 return (Option<TValue>.Some(some.Value.Item1), Option<TValue2>.Some(some.Value.Item2));

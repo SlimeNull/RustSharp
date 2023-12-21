@@ -51,5 +51,8 @@ namespace RustSharp
         public override Option<TNewValue> ZipWith<TValue2, TNewValue>(Option<TValue2> other, Func<TValue, TValue2, TNewValue> f) => other is SomeOption<TValue2> some2 ? Option<TNewValue>.Some(f.Invoke(Value, some2.Value)) : Option<TNewValue>.None();
         public override void Match(Action<TValue> someAction, Action noneAction) => someAction.Invoke(Value);
         public override Option<TValue> Clone() => Value is ICloneable cloneableValue ? Some((TValue)cloneableValue.Clone()) : Some(Value);
+
+
+        public static implicit operator SomeOption<TValue>(Option.ValueSomeOption<TValue> valueSome) => new SomeOption<TValue>(valueSome.Value);
     }
 }

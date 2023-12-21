@@ -38,5 +38,8 @@
         public override Option<TNewValue> ZipWith<TValue2, TNewValue>(Option<TValue2> other, Func<TValue, TValue2, TNewValue> f) => Option<TNewValue>.None();
         public override void Match(Action<TValue> someAction, Action noneAction) => noneAction.Invoke();
         public override Option<TValue> Clone() => None();
+
+
+        public static implicit operator NoneOption<TValue>(Option.ValueNoneOption valueNone) => new NoneOption<TValue>();
     }
 }

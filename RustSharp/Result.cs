@@ -63,6 +63,18 @@
         public static OkResult<TValue, TError> Ok(TValue value) => new OkResult<TValue, TError>(value);
         public static ErrResult<TValue, TError> Err(TError error) => new ErrResult<TValue, TError>(error);
 
+        public static implicit operator Result<TValue, TError>(Result.ValueOkResult<TValue> valueOk) => new OkResult<TValue, TError>(valueOk.Value);
+        public static implicit operator Result<TValue, TError>(Result.ValueErrResult<TError> valueErr) => new ErrResult<TValue, TError>(valueErr.Value);
+
         object ICloneable.Clone() => Clone();
+    }
+
+    public static class Result
+    {
+        public static ValueOkResult<TValue> Ok<TValue>(TValue value) => new ValueOkResult<TValue>(value);
+        public static ValueErrResult<TError> Err<TError>(TError error) => new ValueErrResult<TError>(error);
+
+        public record struct ValueOkResult<TValue>(TValue Value);
+        public record struct ValueErrResult<TValue>(TValue Value);
     }
 }

@@ -52,5 +52,7 @@
         public override bool ContainsErr<TOther>(TOther f) => f.Equals(Value);
         public override void Match(Action<TValue> okAction, Action<TError> errAction) => errAction.Invoke(Value);
         public override Result<TValue, TError> Clone() => Value is ICloneable cloneableValue ? Err((TError)cloneableValue.Clone()) : Err(Value);
+
+        public static implicit operator ErrResult<TValue, TError>(Result.ValueErrResult<TError> valueErr) => new ErrResult<TValue, TError>(valueErr.Value);
     }
 }

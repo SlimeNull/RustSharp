@@ -57,6 +57,22 @@
 
         public static SomeOption<TValue> Some(TValue value) => new SomeOption<TValue>(value);
         public static NoneOption<TValue> None() => new NoneOption<TValue>();
+
+        
+        public static implicit operator Option<TValue>(Option.ValueSomeOption<TValue> valueSome) => new SomeOption<TValue>(valueSome.Value);
+
+        public static implicit operator Option<TValue>(Option.ValueNoneOption valueNone) => new NoneOption<TValue>();
+
+
         object ICloneable.Clone() => Clone();
+    }
+
+    public static class Option
+    {
+        public static ValueSomeOption<TValue> Some<TValue>(TValue value) => new ValueSomeOption<TValue>(value);
+        public static ValueNoneOption None() => new ValueNoneOption();
+
+        public record struct ValueSomeOption<TValue>(TValue Value);
+        public record struct ValueNoneOption;
     }
 }
